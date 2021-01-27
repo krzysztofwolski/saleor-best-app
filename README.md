@@ -1,41 +1,66 @@
-# TypeScript Next.js example
+# Saleor App x TypeScript Next.js example
 
-This is a really simple project that shows the usage of Next.js with TypeScript.
+Barebones example app with webhook on product update.
 
-## Deploy your own
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+Dashboard App docs: https://docs.saleor.io/docs/dashboard/apps
+Dev App docs: https://docs.saleor.io/docs/developer/extending/apps
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-typescript&project-name=with-typescript&repository-name=with-typescript)
+## Disclaimer
 
-## How to use it?
+This is not official Mirumee project.
+Treat this project more as proof of concept, there are no security checks on webhooks and rest of the app is not tested to be released on production.
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
 
-```bash
-npx create-next-app --example with-typescript with-typescript-app
-# or
-yarn create next-app --example with-typescript with-typescript-app
+## Installation
+
+You can use https://github.com/localtunnel/localtunnel to expose your app.
+
+1. In App directory create file `.env.local` containing:
+```
+NEXT_PUBLIC_APP_DOMAIN=https://your.app.url
+SECRET=secret-which-should-be-a-secret
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+2. Configure Saleor URL
 
-## Notes
+https://docs.saleor.io/docs/dashboard/configuration/site#general-information
 
-This example shows how to integrate the TypeScript type system into Next.js. Since TypeScript is supported out of the box with Next.js, all we have to do is to install TypeScript.
+3. Install App dependencies
+
+`$ yarn`
+
+## How to add app to Saleor?
+
+1. Start App dev server
+
+`$ yarn dev`
+
+2. Run `appInstall` mutation from graphql client (MANAGE_APPS permission required!)
 
 ```
-npm install --save-dev typescript
+mutation {
+  appInstall(
+    input: {
+      appName: "Best App"
+      manifestUrl: "https://your.app.url"
+      permissions: [MANAGE_PRODUCTS]
+    }
+  ) {
+    appInstallation {
+      id
+      status
+      appName
+      manifestUrl
+    }
+    appErrors {
+      field
+      message
+      code
+      permissions
+    }
+  }
+}
 ```
 
-To enable TypeScript's features, we install the type declarations for React and Node.
-
-```
-npm install --save-dev @types/react @types/react-dom @types/node
-```
-
-When we run `next dev` the next time, Next.js will start looking for any `.ts` or `.tsx` files in our project and builds it. It even automatically creates a `tsconfig.json` file for our project with the recommended settings.
-
-Next.js has built-in TypeScript declarations, so we'll get autocompletion for Next.js' modules straight away.
-
-A `type-check` script is also added to `package.json`, which runs TypeScript's `tsc` CLI in `noEmit` mode to run type-checking separately. You can then include this, for example, in your `test` scripts.
+3. That's it! 🦄
