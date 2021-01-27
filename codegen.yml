@@ -1,0 +1,26 @@
+overwrite: true
+schema: "http://localhost:8000/graphql/"
+documents: "src/graphql/data/**/*.ts"
+generates:
+  src/graphql/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      reactApolloVersion: 3
+      withHooks: false
+      withHOC: false
+      withComponent: false
+      exportFragmentSpreadSubTypes: true
+      documentMode: graphQLTag
+      dedupeOperationSuffix: true
+      scalars:
+        UUID: string
+        PositiveDecimal: number
+        Upload: string
+        WeightScalar: string
+        GenericScalar: string
+        JSONString: string
+        Date: string
+        DateTime: string
